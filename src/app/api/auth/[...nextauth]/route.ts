@@ -27,8 +27,8 @@ const handler = NextAuth({
           if (!success) return null;
 
           return {
-            id: data.userId,
-            name: data.userName,
+            id: data.id,
+            name: data.name,
             email: data.email,
             accessToken: data.accessToken,
           };
