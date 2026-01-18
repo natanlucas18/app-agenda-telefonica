@@ -1,3 +1,4 @@
+import { login } from '@/src/services/login-service';
 import { PathLinks } from '@/src/types/path-links';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -10,7 +11,7 @@ const handler = NextAuth({
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        username: {},
+        email: {},
         password: {}
       },
 
@@ -19,7 +20,7 @@ const handler = NextAuth({
 
         try {
           const { data, success } = await login({
-            username: credentials.username,
+            email: credentials.email,
             password: credentials.password
           });
 
