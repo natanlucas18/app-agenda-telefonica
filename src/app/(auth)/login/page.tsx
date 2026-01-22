@@ -18,8 +18,8 @@ export default function LoginPage() {
       });
   };
   return (
-    <div className="bg-white w-full h-[91dvh] flex flex-col items-center justify-center main">
-      <form action="POST" className='w-full max-w-md h-[450px] p-6 bg-white border border-gray-200 shadow-md rounded-[15px]' onSubmit={handleSubmit(onSubmit)}>
+    <div className="bg-neutral-100 w-full h-[91dvh] flex flex-col items-center justify-center main">
+      <form action="POST" className='lg:w-full md:w-97 lg:max-w-md md:h-105 h-105 lg:h-[450px] p-6 bg-white border border-gray-200 shadow-md rounded-[15px]' onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-2xl font-bold mb-1 text-black mt-6">Login</h1>
           <p className="text-gray-500 mb-4">Faça login para acessar os seus contatos!</p>
@@ -41,7 +41,7 @@ export default function LoginPage() {
           )}
           <button
             type="submit"
-            className="bg-black text-white font-bold w-58 px-6 py-2 rounded-[20px] hover:bg-zinc-900 hover:text-purple-700 transition-colors cursor-pointer"
+            className="bg-black text-white font-bold w-58 px-6 py-2 rounded-[20px] hover:bg-black/75 transition-colors cursor-pointer"
             disabled={isSubmitting}
           >
             { isSubmitting ? 'Logando...' : 'Entrar'}
