@@ -2,10 +2,15 @@ import { login } from '@/src/services/login-service';
 import { PathLinks } from '@/src/types/path-links';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { cookies } from 'next/headers';
 
 const handler = NextAuth({
   pages: {
     signIn: PathLinks.LOGIN
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt'
   },
   providers: [
     CredentialsProvider({
@@ -25,6 +30,13 @@ const handler = NextAuth({
           });
 
           if (!success) return null;
+
+          (await cookies()).set('token', data.accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            path: '/'
+          })
 
           return {
             id: data.id,
