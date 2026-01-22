@@ -5,6 +5,7 @@ import { RegisterForm, registerFormSchema } from '@/src/types/register-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { redirect } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 
 
@@ -17,16 +18,16 @@ export default function RegisterPage() {
     const {success} = await registerService(formData);
 
     if(!success) {
-        alert('Falha ao criar conta!');
+        toast('Falha ao criar conta!');
     }
-    alert('Conta criada com sucesso!');
+    toast('Conta criada com sucesso!');
     redirect(PathLinks.LOGIN);
   };
 
 
   return (
-    <div className="w-full h-[91vh] flex items-center justify-center main bg-white">
-      <form action="POST" className='w-full max-w-md h-[450px] p-6 bg-white shadow-md border border-gray-200 rounded-[12px]' onSubmit={handleSubmit(onSubmit)}>
+    <div className="w-full h-[91vh] flex items-center justify-center main bg-neutral-100">
+      <form action="POST" className='w-84 md:w-105 lg:w-full lg:max-w-md md:h-110 h-[450px] lg:h-[450px] p-6 bg-white shadow-md border border-gray-200 rounded-md' onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-2xl font-bold mt-8 text-black">Crie sua conta</h1>
           <p className="text-gray-500 mb-2">Crie uma conta simples e rápido!</p>
@@ -59,7 +60,7 @@ export default function RegisterPage() {
           )}
           <button
             type="submit"
-            className="bg-black text-white w-60 px-6 py-2 mt-2 rounded-[20px] hover:bg-zinc-900 transition-colors cursor-pointer"
+            className="bg-black text-white w-60 px-6 py-2 mt-2 rounded-[20px] hover:bg-black/75 transition-colors cursor-pointer"
             disabled={isSubmitting}
           >
            { isSubmitting ? 'Criando conta...' : 'Criar conta' }
