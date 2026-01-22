@@ -14,7 +14,7 @@ export default function LoginPage() {
   const onSubmit = async (formData: LoginForm) => {
       signIn('credentials', {
         ...formData,
-        callbackUrl: PathLinks.HOME
+        callbackUrl: PathLinks.CONTACTS
       });
   };
   return (
