@@ -3,6 +3,7 @@ import NextAuth from "next-auth"
 declare module "next-auth" {
   interface User {
     accessToken: string
+    expiresIn: string
   }
 
   interface Session {
@@ -19,5 +20,6 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     accessToken: string
+    expiresIn: string
   }
 }
