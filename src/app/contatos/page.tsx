@@ -10,17 +10,10 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal, PencilLine, SearchIcon, Trash } from "lucide-react"
+import { ArrowUpDown, SearchIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from '@/components/ui/input'
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -29,147 +22,158 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 import { Contact } from "@/src/types/contacts-schema"
-import CreateContactForm from "@/src/components/contacts-form"
 import { useContacts } from "@/src/hooks/useContacts"
-import { ContactDeleteAlert } from "@/src/components/contact-delete-alert"
 import { formatPhone } from "@/src/lib/format-phone"
-import EditContactForm from "@/src/components/contact-edit-form"
+import CreateContactForm from "@/src/components/contacts-form"
+import { getAriaSort } from "@/src/lib/aria"
+import { ContactActions } from "@/src/components/contact-actions"
 
 export const columns: ColumnDef<Contact>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-black"
-        >
-          Nome
-          <ArrowUpDown className="text-purple-700" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        aria-sort={getAriaSort(column.getIsSorted())}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex items-center gap-1 text-gray-800 hover:text-purple-700"
+      >
+        Nome
+        <ArrowUpDown
+          className={
+            column.getIsSorted()
+              ? "text-purple-600"
+              : "text-gray-400"
+          }
+        />
+      </Button>
+    ),
     cell: ({ row }) => (
-      <div className="capitalize text-gray-500">{row.getValue("name")}</div>
+      <span className="capitalize text-gray-700">
+        {row.getValue("name")}
+      </span>
     ),
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-black"
-        >
-          Email
-          <ArrowUpDown className="text-purple-700"/>
-        </Button>
-      )
-    }, cell: ({ row }) => {
-      return <div className="font-medium text-gray-500">{row.getValue("email")}</div>
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        aria-sort={getAriaSort(column.getIsSorted())}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex items-center gap-1 text-gray-800 hover:text-purple-700"
+      >
+        Email
+        <ArrowUpDown
+          className={
+            column.getIsSorted()
+              ? "text-purple-600"
+              : "text-gray-400"
+          }
+        />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span className="text-gray-700">
+        {row.getValue("email")}
+      </span>
+    ),
   },
   {
     accessorKey: "phone",
-    header: ({ column }) => {
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        aria-sort={getAriaSort(column.getIsSorted())}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex items-center gap-1 text-gray-800 hover:text-purple-700"
+      >
+        Telefone
+        <ArrowUpDown
+          className={
+            column.getIsSorted()
+              ? "text-purple-600"
+              : "text-gray-400"
+          }
+        />
+      </Button>
+    ),
+    cell: ({ getValue }) => {
+      const phone = getValue<string | null>()
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-black"
-        >
-          Telefone
-          <ArrowUpDown className="text-purple-700" />
-        </Button>
+        <span className="text-gray-700">
+          {phone ? formatPhone(phone) : "-"}
+        </span>
       )
     },
-    cell: ({ getValue }) => {
-      const phone = getValue<string>();
-      return ( <div className=" text-gray-500">{formatPhone(phone)}</div>
-    )
-    }, 
   },
   {
     id: "actions",
-    header: () => {
-      return <div className="text-black">Ações</div>
-    },
-    enableHiding: true,
-    cell: ({ row }) => {
-      const contacts = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only text-white cursor-pointer">Abrir menu</span>
-              <MoreHorizontal className="text-gray-600" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="border border-gray-200">
-            <DropdownMenuLabel className="text-gray-600">Ações</DropdownMenuLabel>
-            <EditContactForm defaultValues={contacts}/>
-            <DropdownMenuSeparator />
-            <ContactDeleteAlert contactId={contacts.id} />
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    header: () => (
+      <span className="text-gray-800 font-medium">Ações</span>
+    ),
+    cell: ({ row }) => (
+      <ContactActions contact={row.original}/>
+    )
   },
 ]
 
 export default function ContactsPage() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [page, setPage] = React.useState(1);
-  const [limit, setLimit] = React.useState(10);
-  const [search, setSearch] = React.useState('');
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({})
+  const [page, setPage] = React.useState(1)
+  const [limit, setLimit] = React.useState(10)
+  const [search, setSearch] = React.useState("")
 
-  const sortBy = sorting[0]?.id ?? 'name'
-  const sortOrder = sorting[0]?.desc ? 'desc' : 'asc'
+  const deferredSearch = React.useDeferredValue(search)
+
+  const sortBy = sorting[0]?.id ?? "name"
+  const sortOrder = sorting[0]?.desc ? "desc" : "asc"
 
   const handleLimitChange = (value: string) => {
-    setLimit(Number(value)),
-      setPage(1)
-  };
+    setLimit(Number(value))
+    setPage(1)
+  }
 
-  const { data } = useContacts({
+  const { data, isLoading } = useContacts({
     page,
     limit,
-    search,
+    search: deferredSearch,
     sortBy,
     sortOrder,
   })
 
-
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
   const table = useReactTable({
     data: data?.data ?? [],
     columns,
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
+    state: { sorting, columnVisibility },
     manualSorting: true,
     manualPagination: true,
-    state: {
-      sorting,
-      columnVisibility,
-    },
+    onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   })
 
   return (
-    <main className="flex flex-col w-full min-h-[91dvh] px-2 py-10 md:px-6 md:py-10 lg:px-10 lg:py-10 font-sans bg-neutral-100">
-      <div className="flex flex-col min-h-[80%] bg-white/95 px-4 py-4 rounded-md">
-        <div className="flex flex-col md:flex-row lg:flex-row w-full py-4 gap-2">
+    <main className="flex w-full min-h-[91dvh] px-4 py-10 bg-neutral-100">
+      <section className="w-full bg-white rounded-lg shadow-sm p-5 space-y-4">
+        <div className="flex flex-col md:flex-row gap-3">
           <div className="relative">
-            <SearchIcon className='absolute inset-y-0 left-0 flex place-self-center pointer-events-none pl-2' />
+            <SearchIcon className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
             <Input
-              className="border pl-7 rounded-md text-gray-500 w-65 md:w-72 lg:w-78"
+              className="pl-8 w-72"
               placeholder="Buscar por nome…"
               value={search}
               onChange={(e) => {
@@ -178,36 +182,49 @@ export default function ContactsPage() {
               }}
             />
           </div>
+
           <CreateContactForm />
         </div>
-        <div className="overflow-hidden rounded-md border">
+
+        <div className="rounded-md border border-gray-200 overflow-hidden">
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} className="bg-neutral-100">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
+                  {headerGroup.headers.map(header => (
+                    <TableHead
+                      key={header.id}
+                      className="bg-neutral-50 text-gray-800 font-medium"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                      </TableHead>
-                    )
-                  })}
+                    </TableHead>
+                  ))}
                 </TableRow>
               ))}
             </TableHeader>
+
             <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
+              {isLoading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center text-gray-500"
+                  >
+                    Carregando contatos...
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map(row => (
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
+                    className="hover:bg-neutral-50 transition-colors"
                   >
-                    {row.getVisibleCells().map((cell) => (
+                    {row.getVisibleCells().map(cell => (
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -223,53 +240,55 @@ export default function ContactsPage() {
                     colSpan={columns.length}
                     className="h-24 text-center text-gray-500"
                   >
-                    Nenhum resultado.
+                    Nenhum resultado encontrado.
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </div>
-        <div className='flex flex-col md:flex-row lg:flex-row mt-2 md:mt-4 lg:mt-4 md:items-center lg:items-center justify-between'>
-          <div className='flex items-center justify-start'>
-            <Select value={limit.toString()} onValueChange={handleLimitChange}>
-              <SelectTrigger className='w-18 text-gray-700  mb-2'>
-                <SelectValue className="text-black" placeholder={limit.toString()}
-                />
-              </SelectTrigger>
-              <SelectContent className="w-40 bg-white/95 px-2 py-2 mr-4 rounded-xl border border-neutral-200" side="bottom">
-                <SelectGroup className='rounded-lg'>
-                  <SelectItem value='5' className='cursor-pointer text-black hover:bg-gray-300'>5</SelectItem>
-                  <SelectItem value='10' className='cursor-pointer text-black hover:bg-gray-300'>10</SelectItem>
-                  <SelectItem value='15' className='cursor-pointer text-black hover:bg-gray-300'>15</SelectItem>
-                  <SelectItem value='20' className='cursor-pointer text-black hover:bg-gray-300'>20</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center self-center md:justify-end lg:justify-end gap-4">
+
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <Select value={String(limit)} onValueChange={handleLimitChange}>
+            <SelectTrigger className="w-20">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {[5, 10, 15, 20].map(v => (
+                  <SelectItem key={v} value={String(v)}>
+                    {v}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <div className="flex items-center gap-4">
             <Button
-              className="border text-white hover:bg-black/75 px-3 py-1 rounded-md cursor-pointer"
+              variant="outline"
+              className="border-purple-200 text-purple-700 hover:bg-purple-50"
               disabled={page === 1}
-              onClick={() => setPage(prev => prev - 1)}
+              onClick={() => setPage(p => p - 1)}
             >
               Anterior
             </Button>
 
-            <span className='text-black'>
-              Página {page} de {data?.meta?.totalPages}
+            <span className="text-gray-700">
+              Página {page} de {data?.meta?.totalPages ?? 1}
             </span>
 
             <Button
-              className="border text-white hover:bg-black/75 px-3 py-1 rounded-md cursor-pointer"
+              variant="outline"
+              className="border-purple-200 text-purple-700 hover:bg-purple-50"
               disabled={page === data?.meta?.totalPages}
-              onClick={() => setPage(prev => prev + 1)}
+              onClick={() => setPage(p => p + 1)}
             >
               Próxima
             </Button>
           </div>
         </div>
-      </div>
+      </section>
     </main>
   )
 }
