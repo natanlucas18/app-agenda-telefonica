@@ -1,14 +1,19 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { Plus } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+  DialogFooter,
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -16,77 +21,73 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 
 import {
   contactFormSchema,
   ContactFormType,
-} from '../types/contacts-schema';
-import { useCreateContact } from '../hooks/useCreateContact';
-import { Plus } from 'lucide-react';
-import { Separator } from '@radix-ui/react-select';
+} from "../types/contacts-schema"
+import { useCreateContact } from "../hooks/useCreateContact"
+import { appToast } from "@/src/lib/toast"
 
 export default function CreateContactForm() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   const form = useForm<ContactFormType>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
+      name: "",
+      email: "",
+      phone: "",
     },
-  });
+  })
 
-  const { mutate, isPending } = useCreateContact();
+  const { mutate, isPending } = useCreateContact()
 
   const onSubmit = (data: ContactFormType) => {
     mutate(data, {
       onSuccess: () => {
-        toast.success('Contato criado com sucesso!');
-        form.reset();
-        setOpen(false);
+        appToast.success("Contato criado com sucesso")
+        form.reset()
+        setOpen(false)
       },
       onError: () => {
-        toast.error('Falha ao criar contato');
-        setOpen(false);
-      }
-    });
-  };
+        appToast.error("Erro ao criar contato")
+      },
+    })
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className='w-32 text-sm bg-purple-700 hover:bg-purple-700/75 text-white cursor-pointer'>
-          <Plus/>
-          Novo Contato
+        <Button className="bg-purple-700 hover:bg-purple-600 text-white gap-2">
+          <Plus size={16} />
+          Novo contato
         </Button>
       </DialogTrigger>
 
-      <DialogContent className='border border-gray-100 text-purple-700'>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className='text-black'>Criar Contato</DialogTitle>
+          <DialogTitle>Criar contato</DialogTitle>
         </DialogHeader>
 
-        <Separator/>
+        <Separator />
 
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='space-y-6'
+            className="space-y-4"
           >
             <FormField
               control={form.control}
-              name='name'
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-gray-600'>Nome</FormLabel>
+                  <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input {...field} className='text-gray-500'/>
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -95,12 +96,12 @@ export default function CreateContactForm() {
 
             <FormField
               control={form.control}
-              name='email'
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-gray-600'>Email</FormLabel>
+                  <FormLabel>E-mail</FormLabel>
                   <FormControl>
-                    <Input {...field} className='text-gray-500'/>
+                    <Input type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -109,24 +110,30 @@ export default function CreateContactForm() {
 
             <FormField
               control={form.control}
-              name='phone'
+              name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-gray-600'>Telefone</FormLabel>
+                  <FormLabel>Telefone</FormLabel>
                   <FormControl>
-                    <Input {...field} className='text-gray-500'/>
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type='submit' disabled={isPending} className='bg-purple-700 hover:bg-purple-700/75 text-white cursor-pointer'>
-              {isPending ? 'Salvando...' : 'Salvar'}
-            </Button>
+            <DialogFooter>
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="w-full bg-purple-700 hover:bg-purple-600"
+              >
+                {isPending ? "Salvando..." : "Salvar contato"}
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
