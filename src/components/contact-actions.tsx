@@ -13,6 +13,7 @@ import {
 import { Contact } from "../types/contacts-schema"
 import EditContactForm from "./contact-edit-form"
 import { ContactDeleteAlert } from "./contact-delete-alert"
+import { SendEmailDialog } from "./contact-send-email-dialog"
 
 export function ContactActions({ contact }: { contact: Contact }) {
   const [openMenu, setOpenMenu] = React.useState(false)
@@ -31,6 +32,13 @@ export function ContactActions({ contact }: { contact: Contact }) {
 
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Ações</DropdownMenuLabel>
+
+        <SendEmailDialog
+          email={contact.email}
+          onCloseMenu={() => setOpenMenu(false)}
+        />
+
+        <DropdownMenuSeparator />
 
         <EditContactForm
           defaultValues={contact}
