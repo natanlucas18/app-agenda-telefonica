@@ -1,14 +1,19 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { PencilLine } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+  DialogFooter,
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -16,83 +21,88 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 
 import {
-    Contact,
+  Contact,
   contactFormSchema,
   ContactFormType,
-} from '../types/contacts-schema';
-import { PencilLine } from 'lucide-react';
-import { Separator } from '@radix-ui/react-select';
-import { useUpdateContact } from '../hooks/useUpdateContact';
+} from "@/src/types/contacts-schema"
+import { useUpdateContact } from "@/src/hooks/useUpdateContact"
+import { appToast } from "@/src/lib/toast"
 
-export type EditContactProps = {
-    defaultValues: Contact
+type EditContactProps = {
+  defaultValues: Contact
+  onCloseMenu?: () => void
 }
 
-export default function EditContactForm({defaultValues}: EditContactProps) {
-  const [open, setOpen] = useState(false);
+export default function EditContactForm({
+  defaultValues,
+  onCloseMenu
+}: EditContactProps) {
+  const [open, setOpen] = useState(false)
 
   const form = useForm<ContactFormType>({
     resolver: zodResolver(contactFormSchema),
     defaultValues,
-  });
+  })
 
-  const contactId = defaultValues.id;
-  const { mutate, isPending } = useUpdateContact();
+  const { mutate, isPending } = useUpdateContact()
 
-  const onSubmit = (formData: ContactFormType) => {
-    mutate({
-        id:contactId,
-        data: formData,
-        },
-        {
-      onSuccess: () => {
-        toast.success('Contato editado com sucesso!');
-        form.reset();
-        setOpen(false);
+  const onSubmit = (data: ContactFormType) => {
+    mutate(
+      {
+        id: defaultValues.id,
+        data,
       },
-      onError: () => {
-        toast.error('Falha ao editar contato');
-        setOpen(false);
+      {
+        onSuccess: () => {
+          appToast.success("Contato atualizado com sucesso")
+          setOpen(false)
+          form.reset()
+          onCloseMenu?.()
+        },
+        onError: () => {
+          appToast.error("Erro ao atualizar contato")
+        },
       }
-    });
-  };
+    )
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center text-gray-500 hover:text-purple-700 bg-trasparent hover:bg-transparent cursor-pointer gap-2 border-none">
-            <PencilLine />
-            <span>Editar</span>
+        <Button
+          variant="ghost"
+          className="flex items-center gap-2 text-gray-600 hover:text-purple-700"
+        >
+          <PencilLine size={16} />
+          Editar
         </Button>
       </DialogTrigger>
 
-      <DialogContent className='border border-gray-100 text-purple-700'>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className='text-black'>Editar Contato</DialogTitle>
+          <DialogTitle>Editar contato</DialogTitle>
         </DialogHeader>
 
-        <Separator/>
+        <Separator />
 
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='space-y-6'
+            className="space-y-4"
           >
             <FormField
               control={form.control}
-              name='name'
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-gray-600'>Nome</FormLabel>
+                  <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input {...field} className='text-gray-500'/>
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,12 +111,12 @@ export default function EditContactForm({defaultValues}: EditContactProps) {
 
             <FormField
               control={form.control}
-              name='email'
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-gray-600'>Email</FormLabel>
+                  <FormLabel>E-mail</FormLabel>
                   <FormControl>
-                    <Input {...field} className='text-gray-500'/>
+                    <Input type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,24 +125,30 @@ export default function EditContactForm({defaultValues}: EditContactProps) {
 
             <FormField
               control={form.control}
-              name='phone'
+              name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-gray-600'>Telefone</FormLabel>
+                  <FormLabel>Telefone</FormLabel>
                   <FormControl>
-                    <Input {...field} className='text-gray-500'/>
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type='submit' disabled={isPending} className='bg-purple-700 hover:bg-purple-700/75 text-white cursor-pointer'>
-              {isPending ? 'Salvando...' : 'Salvar alterações'}
-            </Button>
+            <DialogFooter>
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="bg-purple-700 hover:bg-purple-600"
+              >
+                {isPending ? "Salvando..." : "Salvar alterações"}
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
