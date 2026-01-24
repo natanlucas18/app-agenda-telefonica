@@ -2,7 +2,6 @@
 import {  useQuery } from '@tanstack/react-query'
 import { Params } from '../types/params';
 import { getContacts } from '../actions/get-contacts';
-import { cookies } from 'next/headers';
 
 
 export function useContacts({page, limit, search, sortBy, sortOrder}: Params){
