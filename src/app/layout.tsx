@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { NavBar } from "../components/navBar";
+import { NavBar } from "../components/nav-bar";
 import { ClientSessionProvider } from "../components/client-session-provider";
 import { ReactQueryProvider } from "../providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgendaApp",
-  description: "Gerencie seus contatos de forma simples e prática",
+  title: "MailConecta",
+  description: "Gerencie seus contatos e envie emails de forma simple e prática",
 };
 
 export default function RootLayout({
@@ -35,7 +35,13 @@ export default function RootLayout({
           <ReactQueryProvider>
             <NavBar />
             {children}
-            <Toaster position="top-center"/>
+            <Toaster 
+              position="top-center"
+              richColors={false}
+              toastOptions={{
+                duration: 3000,
+              }}
+            />
           </ReactQueryProvider>
         </ClientSessionProvider>
       </body>
