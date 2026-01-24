@@ -43,6 +43,7 @@ const handler = NextAuth({
             name: data.name,
             email: data.email,
             accessToken: data.accessToken,
+            expiresIn: data.expiresIn
           };
         } catch {
           return null;
@@ -58,6 +59,7 @@ const handler = NextAuth({
       token.name = user.name;
       token.email = user.email;
       token.accessToken = user.accessToken
+      token.expiresIn = user.expiresIn
       };
       return token;
     },
@@ -67,6 +69,7 @@ const handler = NextAuth({
       session.user.name = token.name;
       session.user.email = token.email;
       session.user.accessToken = token.accessToken as string
+      session.expires = token.expiresIn as string
       }
       return session;
     }
