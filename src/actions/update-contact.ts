@@ -1,6 +1,6 @@
 'use server';
 import { cookies } from "next/headers";
-import { Contact, ContactForm, ContactFormType } from "../types/contacts-schema";
+import { Contact, ContactFormType } from "../types/contacts-schema";
 import { ResponseServerDto } from "../types/response-server.dto";
 
 export type UpdateContactPayload = {

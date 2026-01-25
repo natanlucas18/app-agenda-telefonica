@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { appToast } from "@/src/lib/toast"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
   const {
@@ -21,6 +22,7 @@ export default function LoginPage() {
   } = useForm<LoginForm>({
     resolver: zodResolver(loginFormSchema),
   })
+  const router = useRouter();
 
 const onSubmit = async (formData: LoginForm) => {
   const toastId = toast.loading("Entrando...")
@@ -39,7 +41,7 @@ const onSubmit = async (formData: LoginForm) => {
   appToast.success("Login realizado com sucesso!")
   toast.dismiss(toastId)
 
-  window.location.href = PathLinks.CONTACTS
+  router.push(PathLinks.CONTACTS);
 }
 
 
