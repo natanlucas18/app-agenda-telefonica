@@ -36,7 +36,7 @@ export default function RootLayout({
             <NavBar />
             {children}
             <Toaster 
-              position="top-center"
+              position="top-right"
               richColors={false}
               toastOptions={{
                 duration: 3000,

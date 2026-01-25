@@ -36,7 +36,7 @@ export function ContactDeleteAlert(
       onSuccess: () => {
         appToast.success("Contato excluído com sucesso")
         setOpen(false)
-        onCloseMenu
+        onCloseMenu?.()
       },
       onError: () => {
         appToast.error("Erro ao excluir contato")
